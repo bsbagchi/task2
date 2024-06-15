@@ -1,113 +1,133 @@
+'use client'
+import axios from "axios";
 import Image from "next/image";
+import { useEffect, useState } from "react";
 
 export default function Home() {
+  const [data, setData] = useState([]);
+  const [value, setValue] = useState('');
+  const [isLoading, setIsLoading] = useState(true); // State to manage loading state
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get('https://602e7c2c4410730017c50b9d.mockapi.io/users');
+        setData(response.data);
+        setIsLoading(false); // Set loading to false once data is fetched
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        setIsLoading(false); // Handle error by setting loading to false
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const handleChange = (e:any) => {
+    setValue(e.target.value);
+  };
+
+  const formatCreatedAt = (createdAt:any) => {
+    const date = new Date(createdAt);
+    
+    // Format date (e.g., "2021-12-17")
+    const formattedDate = `${date.getFullYear()}-${padZero(date.getMonth() + 1)}-${padZero(date.getDate())}`;
+    
+    // Format time in AM/PM without seconds (e.g., "10:30 AM")
+    const formattedTime = date.toLocaleString('en-US', {
+      hour: 'numeric',
+      minute: 'numeric',
+      hour12: true
+    });
+
+    return { formattedDate, formattedTime };
+  };
+
+  const padZero = (num:any) => {
+    return num.toString().padStart(2, '0');
+  };
+
+  console.log(data);
+  console.log(value);
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">app/page.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:size-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
+    <div className="flex">
+      <div className="lg:w-96 h-[100vh] text-black bg-white relative">
+        {isLoading && (
+          <div className="absolute inset-0 flex items-center justify-center bg-white">
+            <p className="text-center">Loading...</p>
+          </div>
+        )}
+        {!isLoading && (
+          <>
+            {value ? (
+              data.map((e) => (
+                e.id === value && (
+                  <div key={e.id} className="flex flex-col px-2 py-9 space-y-4">
+                    <div className="px-2 border">
+                      <div className="border-2 mx-auto w-40 h-40 border-black rounded-full overflow-hidden">
+                        {e.avatar ? (
+                          <Image className="" alt={e.profile.username} width={48} height={48} src={e.avatar}></Image>
+                          ) : (
+                          <p>No image available</p>
+                        )}
+                      </div>
+                      <h1 className="text-center font-mono text-2xl py-5 ">{e.profile.username}</h1>
+                    </div>
+                    <div className="text-2xl px-2 border py-3">
+                      <h1 className="font-semibold">Full Name:</h1> 
+                      <h1 className="flex px-3">{e.profile.firstName}<span className="px-3">{e.profile.lastName}</span></h1>
+                    </div>
+                    <div className="text-2xl px-2 border py-3">
+                      <h1 className="font-semibold">Gmail:</h1>
+                      <h1 className="px-3">{e.profile.email}</h1>
+                    </div>
+                    <div className="text-2xl px-2 border py-3">
+                      <h1 className="font-semibold ">Job Title:</h1>
+                      <h1 className="px-3">{e.jobTitle}</h1>
+                    </div>
+                    <div className="text-2xl px-2 border py-3">
+                      <h1 className="font-semibold">Bio:</h1>
+                      <p className="px-3">{e.Bio}</p>
+                    </div>
+                    <div className="text-2xl border-t px-2">
+                      <h1 className="font-semibold">Created At</h1>
+                      <div className="flex px-2">
+                        <h1>Date:</h1>
+                        <h1 className="px-2">{formatCreatedAt(e.createdAt).formattedDate}</h1>
+                      </div>
+                      <div className="flex px-2">
+                        <h1>Time:</h1>
+                        <h1 className="px-2">{formatCreatedAt(e.createdAt).formattedTime}</h1>
+                      </div>
+                    </div>
+                  </div>
+                )
+              ))
+            ) : (
+              <p className="text-center mt-10">Select a user from the dropdown</p>
+            )}
+          </>
+        )}
+        {!isLoading && data.length === 0 && (
+          <p className="text-center mt-10">No data available</p>
+        )}
+      </div>
+      <div className="flex flex-col p-4">
+        <h1 className="mx-5 text-3xl font-black">USER</h1>
+        <div className="flex">
+          <h1 className="text-3xl font-semibold px-4">Select User</h1>
+          <select className="py-3 px-3 bg-gray-600" onChange={handleChange} value={value}>
+            <option value="" disabled hidden>Select user</option>
+            {data.map((user,index) => (
+              <option key={index} value={user.id}>
+                <Image width={40} height={40} alt='' src={user.avatar}></Image>
+                {user.profile.firstName} {user.profile.lastName}
+              </option>
+            ))}
+          </select>
         </div>
       </div>
-
-      <div className="relative z-[-1] flex place-items-center before:absolute before:h-[300px] before:w-full before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-full after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 sm:before:w-[480px] sm:after:w-[240px] before:lg:h-[360px]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className="mb-32 grid text-center lg:mb-0 lg:w-full lg:max-w-5xl lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Docs{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Learn{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Templates{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Explore starter templates for Next.js.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Deploy{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-balance text-sm opacity-50">
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
+    </div>
   );
 }
