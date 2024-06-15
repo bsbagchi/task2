@@ -21,6 +21,7 @@ export default function Home() {
   const [data, setData] = useState<UserData[]>([]);
   const [value, setValue] = useState<string>('');
   const [isLoading, setIsLoading] = useState(true); // State to manage loading state
+  const [hidden, setHidden]=useState(' hidden ');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -129,18 +130,19 @@ export default function Home() {
       </div>
       <div className="flex flex-col p-4">
         <h1 className="mx-5 text-3xl font-black">USER</h1>
-        <div className="flex">
-          <h1 className="text-3xl font-semibold px-4">Select User</h1>
-          <select className="py-3 px-3 bg-gray-600" onChange={handleChange} value={value}>
-            <option value="" disabled hidden>Select user</option>
-            {data.map((user,index) => (
-              <option key={index} value={user.id}>
-                <Image width={40} height={40} alt='' src={user.avatar}></Image>
-                {user.profile.firstName} {user.profile.lastName}
-              </option>
-            ))}
-          </select>
-        </div>
+     
+         <button onClick={()=>hidden===' hidden '?setHidden('  '):setHidden(' hidden ')}><h1 className="text-3xl border  bg-gray-300 shadow-2xl shadow-gray-500 text-black py-2 flex font-semibold px-4">Select User <div className="px-3  rotate-180">^</div></h1></button> 
+
+          <ul className={"py-3 px-3 text-black h-96 overflow-auto bg-white"+hidden}>{data.map((user,index) => (
+              <li onClick={()=>{setValue(user.id)
+               }} className="w-full  border-b-2 pt-3 h-fit hover:bg-gray-300 cursor-pointer flex" key={index} value={user.id}>
+                <div className="w-12 h-12 rounded-full overflow-hidden"><Image width={48} height={48} alt='' src={user.avatar}></Image></div>
+
+                <h1 className='text-xl pl-3 font-semibold'>{user.profile.firstName}</h1> <h1 className='px-2 text-xl font-semibold'>{user.profile.lastName}</h1>
+              </li>
+            ))}</ul>
+          
+        
       </div>
     </div>
   );
