@@ -81,7 +81,7 @@ export default function Home() {
                     <div className="px-2 border">
                       <div className="border-2 mx-auto w-40 h-40 border-black rounded-full overflow-hidden">
                         {e.avatar ? (
-                          <Image className="" alt={e.profile.username} width={48} height={48} src={e.avatar}></Image>
+                          <Image className="text-center " alt={" no image of "+e.profile.username} width={160} height={160} src={e.avatar}></Image>
                           ) : (
                           <p>No image available</p>
                         )}
