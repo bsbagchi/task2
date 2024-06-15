@@ -38,9 +38,7 @@ export default function Home() {
     fetchData();
   }, []);
 
-  const handleChange = (e:any) => {
-    setValue(e.target.value);
-  };
+ 
 
   const formatCreatedAt = (createdAt:any) => {
     const date = new Date(createdAt);
@@ -67,7 +65,7 @@ export default function Home() {
 
   return (
     <div className="flex">
-      <div className="lg:w-96 h-[100vh] text-black bg-white relative">
+      <div className="lg:w-96 overflow-hidden h-[100vh] text-black bg-white relative">
         {isLoading && (
           <div className="absolute inset-0 flex items-center justify-center bg-white">
             <p className="text-center">Loading...</p>
@@ -133,10 +131,11 @@ export default function Home() {
      
          <button onClick={()=>hidden===' hidden '?setHidden('  '):setHidden(' hidden ')}><h1 className="text-3xl border  bg-gray-300 shadow-2xl shadow-gray-500 text-black py-2 flex font-semibold px-4">Select User <div className="px-3  rotate-180">^</div></h1></button> 
 
-          <ul className={"py-3 px-3 text-black h-96 overflow-auto bg-white"+hidden}>{data.map((user,index) => (
-              <li onClick={()=>{setValue(user.id)
+          <ul className={"py-3 px-3 text-black h-96 overflow-auto bg-white "+hidden}>{data.map((user,index) => (
+              <li onClick={()=>{setValue(user.id);
+                setHidden(' hidden ');
                }} className="w-full  border-b-2 pt-3 h-fit hover:bg-gray-300 cursor-pointer flex" key={index} value={user.id}>
-                <div className="w-12 h-12 rounded-full overflow-hidden"><Image width={48} height={48} alt='Image is not available' src={user.avatar}></Image></div>
+                <div className="w-12 h-12 rounded-full overflow-hidden"><Image width={48} height={48} alt={'Image is not available'} src={user.avatar}></Image></div>
 
                 <h1 className='text-xl pl-3 font-semibold'>{user.profile.firstName}</h1> <h1 className='px-2 text-xl font-semibold'>{user.profile.lastName}</h1>
               </li>
