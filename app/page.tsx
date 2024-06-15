@@ -136,7 +136,7 @@ export default function Home() {
           <ul className={"py-3 px-3 text-black h-96 overflow-auto bg-white"+hidden}>{data.map((user,index) => (
               <li onClick={()=>{setValue(user.id)
                }} className="w-full  border-b-2 pt-3 h-fit hover:bg-gray-300 cursor-pointer flex" key={index} value={user.id}>
-                <div className="w-12 h-12 rounded-full overflow-hidden"><Image width={48} height={48} alt='' src={user.avatar}></Image></div>
+                <div className="w-12 h-12 rounded-full overflow-hidden"><Image width={48} height={48} alt='Image is not available' src={user.avatar}></Image></div>
 
                 <h1 className='text-xl pl-3 font-semibold'>{user.profile.firstName}</h1> <h1 className='px-2 text-xl font-semibold'>{user.profile.lastName}</h1>
               </li>
