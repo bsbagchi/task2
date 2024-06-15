@@ -3,9 +3,23 @@ import axios from "axios";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
+interface UserData {
+  id: string;
+  profile: {
+    username: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+  };
+  avatar: string;
+  jobTitle: string;
+  Bio: string;
+  createdAt: string;
+}
+
 export default function Home() {
-  const [data, setData] = useState([]);
-  const [value, setValue] = useState('');
+  const [data, setData] = useState<UserData[]>([]);
+  const [value, setValue] = useState<string>('');
   const [isLoading, setIsLoading] = useState(true); // State to manage loading state
 
   useEffect(() => {
